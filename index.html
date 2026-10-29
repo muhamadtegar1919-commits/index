@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Latihan TKA Bahasa Inggris</title>
+<style>
+:root{color-scheme:light;--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#647084;--accent:#315ee8;--line:#dfe5ef;--good:#e6f8ed;--bad:#fff0ef}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:820px;margin:0 auto;padding:24px 16px 48px}
+header{background:linear-gradient(135deg,#2548c9,#6d4de6);color:#fff;padding:26px 22px;border-radius:20px;margin-bottom:20px}
+h1{font-size:clamp(1.55rem,5vw,2.2rem);line-height:1.2;margin:0 0 8px}
+header p{margin:0;opacity:.92}
+.progress-wrap{height:8px;background:#e3e8f4;border-radius:20px;overflow:hidden;margin:16px 0 22px}
+#progress{height:100%;width:0;background:var(--accent);transition:width .2s}
+.question{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin:14px 0;box-shadow:0 3px 12px #18213a08}
+.question h2{font-size:1.04rem;margin:0 0 12px}
+.passage{color:#38445a;margin:0 0 12px}
+.option{display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:11px;margin:8px 0;cursor:pointer}
+.option:has(input:checked){border-color:var(--accent);background:#eef2ff}
+.option input{margin-top:5px;accent-color:var(--accent);flex-shrink:0}
+button{border:0;border-radius:12px;padding:13px 18px;font-weight:700;font-size:1rem;cursor:pointer}
+#submit{background:var(--accent);color:white;width:100%;margin-top:12px}
+#reset{background:#e8ecf5;color:#172033;width:100%;margin-top:10px}
+#result{display:none;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:20px}
+.score{font-size:2.4rem;font-weight:800;color:var(--accent);margin:0}
+.feedback{padding:12px;border-radius:10px;margin:10px 0;background:#f2f5fa}
+.correct{background:var(--good)}.incorrect{background:var(--bad)}
+.small{color:var(--muted);font-size:.92rem}
+footer{text-align:center;color:var(--muted);font-size:.85rem;margin-top:24px}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>Latihan TKA Bahasa Inggris</h1>
+<p>10 soal pilihan ganda • Koreksi otomatis • Nilai langsung keluar</p>
+</header>
+<p class="small">Pilih satu jawaban untuk setiap soal, lalu tekan <b>Periksa Jawaban</b>. Setiap jawaban benar bernilai 10 poin.</p>
+<div class="progress-wrap" aria-label="Progress menjawab"><div id="progress"></div></div>
+<form id="quiz">
+<div id="questions"></div>
+<button id="submit" type="submit">Periksa Jawaban</button>
+</form>
+<section id="result" aria-live="polite"></section>
+<footer>Latihan mandiri TKA Bahasa Inggris</footer>
+</main>
+<script>
+const questions = [
+{q:"Read the text. Many students believe that studying for long hours guarantees good results. However, research suggests that taking short breaks and getting enough sleep can improve concentration and memory. What is the main idea of the text?",o:["Long study sessions are always effective.","Effective studying requires healthy habits.","Students should avoid studying at night.","Memory is unrelated to concentration."],a:1,why:"Teks menekankan istirahat singkat dan tidur cukup sebagai kebiasaan yang membantu belajar."},
+{q:"Read the text. The city has introduced more bicycle lanes to reduce traffic congestion and air pollution. Although some drivers complain about losing road space, many residents welcome the change. What can be inferred from the text?",o:["All drivers support bicycle lanes.","The city wants to encourage cycling.","Air pollution has completely disappeared.","Residents are no longer using cars."],a:1,why:"Pembuatan jalur sepeda menunjukkan kota ingin mendorong warga bersepeda."},
+{q:"Choose the word closest in meaning to “reluctant” in this sentence: “Dina was reluctant to speak in public because she was afraid of making mistakes.”",o:["Unwilling","Excited","Confident","Prepared"],a:0,why:"Reluctant berarti ragu-ragu atau tidak bersedia melakukan sesuatu."},
+{q:"Choose the grammatically correct sentence.",o:["She have finished her assignment.","They has lived here since 2020.","He has studied English for three years.","I has never visited Bali."],a:2,why:"Subjek “he” menggunakan “has” dalam present perfect."},
+{q:"Read the text. Online learning offers flexibility because students can access materials from different locations. Nevertheless, it requires self-discipline, since learners must manage their own schedules. What is the purpose of the text?",o:["To explain advantages and challenges of online learning.","To argue that classrooms should be closed.","To describe the history of online education.","To prove that online learning is ineffective."],a:0,why:"Teks menjelaskan kelebihan berupa fleksibilitas dan tantangan berupa disiplin diri."},
+{q:"Complete the sentence: “If I _____ enough time tomorrow, I will help you prepare for the test.”",o:["have","had","will have","having"],a:0,why:"First conditional menggunakan present simple pada klausa “if” untuk kemungkinan di masa depan."},
+{q:"Read the text. Rani used to throw away plastic bottles after drinking. After joining an environmental club, she began carrying a reusable bottle and encouraging her classmates to reduce plastic waste. What can be inferred about Rani?",o:["She has become more environmentally conscious.","She no longer attends school.","She believes plastic has no environmental impact.","She refuses to work with classmates."],a:0,why:"Kebiasaan baru Rani menunjukkan bahwa ia semakin peduli terhadap lingkungan."},
+{q:"Choose the best word to complete the sentence: “The instructions were so _____ that everyone understood what to do.”",o:["Ambiguous","Vague","Confusing","Clear"],a:3,why:"Clear berarti jelas, sesuai dengan keadaan ketika semua orang memahami instruksi."},
+{q:"Read the text. Although public transportation can reduce the number of private vehicles on the road, its effectiveness depends on reliability, affordability, and accessibility. Which statement best summarizes the text?",o:["Public transportation is useful only in large cities.","Public transportation works best when its services meet people's needs.","Private vehicles should be banned immediately.","Public transportation always eliminates traffic congestion."],a:1,why:"Transportasi umum efektif jika andal, terjangkau, dan mudah diakses."},
+{q:"Complete the sentence: “The report _____ by the students yesterday before it was submitted to the teacher.”",o:["checks","was checked","has checked","is checking"],a:1,why:"“The report” menerima tindakan dan “yesterday” menunjukkan past tense, jadi bentuk pasifnya “was checked”."}
+];
+const letters=["A","B","C","D"];
+const root=document.getElementById("questions");
+questions.forEach((item,i)=>{
+ const card=document.createElement("section");card.className="question";card.id="q"+i;
+ const h=document.createElement("h2");h.textContent=`${i+1}. ${item.q}`;card.appendChild(h);
+ item.o.forEach((opt,j)=>{
+  const label=document.createElement("label");label.className="option";
+  const input=document.createElement("input");input.type="radio";input.name="q"+i;input.value=j;
+  input.addEventListener("change",updateProgress);
+  const span=document.createElement("span");span.textContent=`${letters[j]}. ${opt}`;
+  label.append(input,span);card.appendChild(label);
+ });
+ root.appendChild(card);
+});
+function updateProgress(){
+ const answered=questions.filter((_,i)=>document.querySelector(`input[name="q${i}"]:checked`)).length;
+ document.getElementById("progress").style.width=(answered/questions.length*100)+"%";
+}
+document.getElementById("quiz").addEventListener("submit",e=>{
+ e.preventDefault();
+ let score=0,answered=0;
+ const result=document.getElementById("result");result.innerHTML="";
+ questions.forEach((item,i)=>{
+  const chosen=document.querySelector(`input[name="q${i}"]:checked`);
+  const card=document.getElementById("q"+i);
+  card.querySelectorAll(".feedback").forEach(el=>el.remove());
+  card.querySelectorAll(".option").forEach(el=>el.classList.remove("correct","incorrect"));
+  if(chosen) answered++;
+  const isCorrect=chosen && Number(chosen.value)===item.a;
+  if(isCorrect)score++;
+  card.querySelectorAll(".option")[item.a].classList.add("correct");
+  if(chosen && !isCorrect)card.querySelectorAll(".option")[Number(chosen.value)].classList.add("incorrect");
+  const fb=document.createElement("div");fb.className="feedback "+(isCorrect?"correct":(chosen?"incorrect":""));
+  fb.innerHTML=`<b>${isCorrect?"Benar":chosen?"Belum tepat":"Belum dijawab"}.</b> Jawaban: ${letters[item.a]}. ${item.o[item.a]}<br><span class="small">${item.why}</span>`;
+  card.appendChild(fb);
+ });
+ const numeric=Math.round(score/questions.length*100);
+ result.style.display="block";
+ result.innerHTML=`<p class="small">HASIL LATIHAN</p><p class="score">${numeric}/100</p><h2>${score} dari ${questions.length} jawaban benar</h2><p>Kamu menjawab ${answered} dari ${questions.length} soal.</p><p class="small">Jawaban benar ditandai hijau; jawaban salah ditandai merah. Pembahasan tersedia di bawah setiap soal.</p><button id="reset" type="button">Ulangi Latihan</button>`;
+ document.getElementById("reset").addEventListener("click",()=>{
+  document.getElementById("quiz").reset();
+  document.querySelectorAll(".feedback").forEach(el=>el.remove());
+  document.querySelectorAll(".option").forEach(el=>el.classList.remove("correct","incorrect"));
+  result.style.display="none";updateProgress();window.scrollTo({top:0,behavior:"smooth"});
+ });
+ result.scrollIntoView({behavior:"smooth",block:"start"});
+});
+</script>
+</body>
+</html>
